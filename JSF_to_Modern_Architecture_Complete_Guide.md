@@ -106,33 +106,7 @@ Bir sarkaçtan çok, **yukarı doğru bir spiral** hareketi bu. Her döngüde bi
 
 ### Yol Haritamız
 
-```mermaid
-timeline
-    title Web Mimarisi Evrimi (2000-2026)
-    2000-2005 : PHP Çağı
-              : Tek Dosya Basitliği
-              : SQL + HTML Karışımı
-    2003-2010 : JSF Devrimi
-              : Component Model
-              : Yaşam Döngüsü (Lifecycle)
-              : ViewState Yönetimi
-    2008-2015 : PrimeFaces Altın Çağı
-              : Zengin UI Component'leri
-              : AJAX Entegrasyonu
-              : Enterprise Standart
-    2010-2015 : Mobil ve SPA Kopuşu
-              : Full Page Reload Sorunu
-              : React ve AngularJS
-              : API-First Mimari
-    2015-2023 : SPA Dominasyonu
-              : Separation of Concerns
-              : Karmaşıklık Patlaması
-              : 12 Dosya Problemi
-    2023-2026 : Modern SSR Dönüşü
-              : Next.js ve RSC
-              : Server Actions
-              : Sunucuya Geri Dönüş
-```
+![Web Mimarisi Evrimi Timeline](images/diagram_01_timeline_evolution.png)
 
 ---
 
@@ -154,6 +128,8 @@ Bu yolculukta tekrar tekrar göreceğiniz üç evrensel hakikat var. Bunları ba
 ### İlke 1: State Management Asla Kaybolmaz, Sadece Yer Değiştirir
 
 **Durum yönetimi** web'in temel problemidir. HTTP protokolü "stateless" (durumsuz) olduğu için, kullanıcının durumunu bir yerde tutmalıyız:
+
+![State Management Evrimi](images/diagram_02_state_management.png)
 
 - **JSF (2006)**: Sunucu RAM'inde (Session + ViewState)
 - **React SPA (2015)**: Tarayıcı hafızasında (Redux, Context)
@@ -287,26 +263,7 @@ Cevap: **JSP ve JSF**
 
 Yazılım dünyası doğrusal bir çizgide ilerlemez; bir sarkaç gibi salınır. Biz şu an, sarkacın tekrar "Sunucu" (Server) tarafına döndüğü tarihi bir ana tanıklık ediyoruz.
 
-```mermaid
-graph LR
-    A[2000-2010: Sunucu Odaklı] -- Sarkaç İstemciye Kaydı --> B[2010-2023: İstemci Odaklı]
-    B -- Sarkaç Sunucuya Döndü --> C[2024+: Hibrit/Sunucu Odaklı]
-    
-    subgraph "Dönem 1: Monolitik Güç"
-    A --> JSF[JSF / ASP.NET]
-    A --> Logic1[Mantık Sunucuda]
-    end
-    
-    subgraph "Dönem 2: Dağıtık Özgürlük"
-    B --> SPA[React / Angular SPA]
-    B --> Logic2[Mantık Tarayıcıda]
-    end
-    
-    subgraph "Dönem 3: Modern Sentez"
-    C --> Next[Next.js / RSC]
-    C --> Logic3[Mantık Sunucuda (Tekrar)]
-    end
-```
+![Mimari Sarkaç](images/diagram_03_pendulum.png)
 
 ### Aydınlanma Anı (The Aha! Moment)
 *   **Dün (JSF):** `h:commandButton` ile sunucudaki bir Java metodunu çağırırdık.
@@ -316,6 +273,9 @@ graph LR
 ### Component Ağacı: UI Nerede Yaşıyor?
 
 UI bileşenlerimiz (Button, Input, Panel) nerede yaşıyor? Bu sorunun cevabı, mimarinin kalbidir.
+
+![Component Tree Evrimi](images/11_component_tree_evolution.png)
+
 <!-- TODO: review -->
 ![Component Tree Evrimi](/images/component_tree_evolution.png)
 <!-- ⚠️ EKSİK GÖRSEL: Bu dosya henüz oluşturulmamış -->
@@ -342,24 +302,7 @@ JSF'de `UIViewRoot` sunucu hafızasındadır (Heap). Tarayıcı sadece bir "yans
 #### C. Modern Mimari (RSC): "Ağaç Eve Dönüyor"
 React Server Components (RSC) ile ağacın gövdesini tekrar sunucuya taşıdık, sadece yapraklarını (Interactivity) tarayıcıda bıraktık.
 
-```mermaid
-classDiagram
-    class ServerComponent {
-        <<Sunucuda Çalışır>>
-        +Database Erişim
-        +HTML Üretim
-        -JavaScript Gönderilmez
-    }
-    class ClientComponent {
-        <<Tarayıcıda Çalışır>>
-        +useState()
-        +onClick()
-        +Browser API
-    }
-    ServerComponent *-- ClientComponent : Kapsar
-    note for ServerComponent "Gövde (Layout, Data)"
-    note for ClientComponent "Yapraklar (Button, Input)"
-```
+![RSC Class Diyagramı](images/diagram_04_rsc_class.png)
 
 ### 🔍 JSF'in Kalbi: Request Processing Lifecycle
 
@@ -370,22 +313,7 @@ classDiagram
 
 Bir JSF sayfasına tıkladığınızda, sunucu tarafında bu **6 adım asla şaşmaz**. Modern frontend framework'lerinde `useEffect` karmaşası yaşarken, JSF 20 yıldır bu katı disiplini uygular.
 
-```mermaid
-graph TD
-    A[1. Restore View<br/>Görünümü Geri Yükle] --> B[2. Apply Request Values<br/>İstek Değerlerini Al]
-    B --> C[3. Process Validations<br/>Doğrula]
-    C --> D[4. Update Model Values<br/>Modeli Güncelle]
-    D --> E[5. Invoke Application<br/>Uygulamayı Çalıştır]
-    E --> F[6. Render Response<br/>Cevabı Oluştur]
-    
-    F -.Eski sayfa var mı?.--> A
-    
-    C -.Hata varsa atla!.--> F
-    
-    style A fill:#e1f5ff
-    style E fill:#ffe1e1
-    style F fill:#e1ffe1
-```
+![JSF Lifecycle Diyagramı](images/diagram_05_jsf_lifecycle.png)
 
 ![JSF Lifecycle Faz Akışı](images/jsf_lifecycle_phases.png)
 ![JSF Lifecycle Faz Akışı detaylı](images/jsf_lifecycle_phases_v2.png)  
@@ -529,18 +457,7 @@ React'te "Virtual DOM" diye bir şey duydunuz değil mi? Tarayıcı hafızasınd
 
 JSF'nin en az anlaşılan gücü: **"Write Once, Render Anywhere"**
 
-```mermaid
-graph TD
-    Component[UICommand<br/>Button Bileşeni] --> HTML[HTML Renderer]
-    Component --> WML[WML Renderer]
-    Component --> JSON[JSON Renderer]
-    
-    HTML --> Output1["<button>Tıkla</button>"]
-    WML --> Output2[Nokia Telefonlar İçin WML]
-    JSON --> Output3[Modern API Response]
-    
-    style Component fill:#ffe1e1
-```
+![Renderer Mekanizması](images/diagram_06_renderer.png)
 
 **Bileşen (Logic)** ile **Görüntü (Renderer)** ayrıdır:
 - Teorik olarak, JSF kodunuzu hiç değiştirmeden, sadece "Renderer" değiştirerek çıktıyı:
@@ -1142,15 +1059,8 @@ Aslında ikisi de aynı şeyi yapar: **Stateless olan HTTP protokolü üzerinde,
 
 ## 5. Karmaşıklık Eğrisi: Neden Dönüyoruz?
 
-Neden SPA (Single Page App) devri kapanıyor? Çünkü "Arızi Karmaşıklık" (Accidental Complexity) yönetilemez hale geldi.
-```mermaid
-xychart-beta
-    title "Proje Büyüklüğüne Göre Karmaşıklık"
-    x-axis [Basit App, Orta Ölçek, Enterprise]
-    y-axis "Efor / Kod Satırı" 0 --> 100
-    line [10, 40, 90] line-legend "React SPA + REST API"
-    line [20, 30, 40] line-legend "Next.js / Modern Monolit"
-```
+Neden SPA'dan SSR'a dönülüyor? Çünkü "Arızi Karmaşıklık" (Accidental Complexity) yönetilemez hale geldi.
+![Karmaşıklık Eğrisi](images/diagram_07_complexity_curve.png)
 
 *   **SPA + REST:** Basit bir "Merhaba Dünya" için bile DTO, Controller, Service, Axios, Redux, Store, Component gerekir. (10+ Dosya)
 *   **Modern Monolit:** Veritabanı ve UI yan yana. (2-3 Dosya). Tip güvenliği (Type Safety) uçtan uca otomatik.
@@ -1168,7 +1078,12 @@ Mimari seçimler sadece "hangi framework" sorusu değildir. **Verinin nereden ge
 
 ### N+1 Query Problemi: Lazy Loading'in Bedeli
 
+
+
 ![N+1 Query Problemi](/images/n_plus_one_problem.png)
+
+![N+1 Query Problemi](images/08_n_plus_one.png)
+
 <!-- ⚠️ EKSİK GÖRSEL: Bu dosya henüz oluşturulmamış -->
 
 <!-- 📸 GÖRSEL PROMPT: n_plus_one_problem.png
@@ -1182,6 +1097,8 @@ Style: Network diagram with latency indicators."
 Boyut: 1400x600px, Format: PNG -->
 
 **Senaryo**: 100 kullanıcı listesi, her birinin departmanı gösterilecek.
+
+![N+1 Problem Karşılaştırması](images/diagram_08_n_plus_one.png)
 
 **JSF (Sunucu tarafı)**:
 ```java
@@ -1219,22 +1136,12 @@ const users = await fetch('/api/users'); // 1 istek
 
 ### Veri Yoğunluğu ve Mimari Seçimi
 
-```mermaid
-quadrantChart
-    title Veri Yoğunluğu vs Etkileşim Matrisi
-    x-axis Düşük Etkileşim --> Yüksek Etkileşim
-    y-axis Az Veri --> Çok Veri
-    quadrant-1 SPA + GraphQL
-    quadrant-2 Server Components
-    quadrant-3 Statik Site
-    quadrant-4 SPA + REST
-    
-    Admin Panel: [0.2, 0.9]
-    Dashboard: [0.5, 0.7]
-    E-ticaret: [0.7, 0.6]
-    Chat App: [0.9, 0.3]
-    Blog: [0.1, 0.2]
-```
+| | Düşük Etkileşim | Yüksek Etkileşim |
+|---|---|---|
+| **Çok Veri** | ✅ Server Components (Admin, Dashboard) | ⚠️ SPA + GraphQL (E-ticaret) |
+| **Az Veri** | 🟢 Statik Site (Blog) | 🔵 SPA + REST (Chat, Real-time) |
+
+![Veri Yoğunluğu vs Etkileşim](images/diagram_09_data_intensity.png)
 
 **Yorumlama:**
 - **Sol üst (Çok veri, az etkileşim)**: JSF/PrimeFaces veya Server Components ideal
@@ -1254,6 +1161,9 @@ quadrantChart
 *TTI: Time to Interactive
 
 ### Waterfall: Client'ta mı, Server'da mı?
+
+![Waterfall Karşılaştırması](images/12_waterfall_comparison.png)
+
 
 ![Waterfall Karşılaştırması](/images/waterfall_comparison.png)
 <!-- ⚠️ EKSİK GÖRSEL: Bu dosya henüz oluşturulmamış -->
@@ -1288,6 +1198,8 @@ Sayfa yükle → JS parse → Veri iste → Bekle → Render → Alt veri iste �
 
 ### Kritik İçgörü: Data Proximity
 
+![Data Proximity Diagramı](images/13_data_proximity.png)
+
 ![Data Proximity Diagramı](/images/data_proximity_diagram.png)
 <!-- ⚠️ EKSİK GÖRSEL: Bu dosya henüz oluşturulmamış -->
 
@@ -1315,6 +1227,7 @@ Boyut: 1000x1000px, Format: PNG -->
 ---
 
 ## 8️⃣ JSF'ten Öğrenmemiz Gerekenler: Kayıp Best Practice'ler
+![Best Practices Karşılaştırması](images/diagram_14_best_practices.png)
 
 ![Best Practices Karşılaştırması](/images/best_practices_comparison.png)
 <!-- ⚠️ EKSİK GÖRSEL: Bu dosya henüz oluşturulmamış -->
@@ -1675,27 +1588,7 @@ Mevcut SPA/SSR projenizde şu soruları sorun:
 
 ### Karar Ağacı (Decision Tree)
 
-```mermaid
-graph TD
-    Start[Proje Başlangıç] --> Q1{Halka Açık<br/>B2C mi?}
-    
-    Q1 -->|Evet<br/>SEO Kritik| Modern[Modern Stack<br/>Next.js/Nuxt]
-    Q1 -->|Hayır<br/>Intranet/B2B| Q2{Frontend<br/>Uzmanı<br/>Var mı?}
-    
-    Q2 -->|Evet<br/>React/Vue bilen| Q3{UX Çok<br/>Önemli mi?}
-    Q2 -->|Hayır<br/>Sadece Java| Q4{UI Karmaşık?<br/>Çok tablo?}
-    
-    Q3 -->|Evet<br/>Özel tasarım| Modern2[Modern Stack<br/>Tam kontrol]
-    Q3 -->|Hayır<br/>Standart| Q4
-    
-    Q4 -->|Evet<br/>Grid/Rapor/Form| JSF[JSF + PrimeFaces<br/>veya Vaadin]
-    Q4 -->|Hayır<br/>Basit ekranlar| Simple[Thymeleaf<br/>+ HTMX]
-    
-    style Modern fill:#61dafb
-    style Modern2 fill:#61dafb
-    style JSF fill:#ff6b6b
-    style Simple fill:#ffd93d
-```
+![Karar Ağacı](images/diagram_10_decision_tree.png)
 
 ### Mimari Seçim Kriterleri
 
@@ -1731,6 +1624,8 @@ graph TD
 > **Mimari kararı teknoloji değil, bağlamdır.** "Modern" olmak için React seçmek, 3x daha yavaş geliştirmeyi kabullenmek demektir. "Eski" kaldı diye JSF'i terk etmek, kanıtlanmış çözümden vazgeçmektir.
 
 ## 🏁 Kapanış
+
+![Spiral Yükseliş](images/diagram_15_spiral_ascent.png)
 
 ![Spiral Yükseliş](/images/spiral_ascent_final.png)
 <!-- ⚠️ EKSİK GÖRSEL: Bu dosya henüz oluşturulmamış -->
