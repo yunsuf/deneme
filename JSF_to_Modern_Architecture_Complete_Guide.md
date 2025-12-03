@@ -1,8 +1,12 @@
-# Tarih Tekerrürden İbarettir: JSF'ten Modern Mimariye Büyük Dönüş
+# Dijital Ouroboros: Geleceğin Arkeolojisi
 
-**Ana Tema:** "Tarih Tekerrürden İbarettir: Sunucudan Ayrılış ve Eve Dönüş"
+**Alt Başlık:** Tarih Tekerrürden İbarettir: Sunucudan Ayrılış ve Eve Dönüş
 
-Bu doküman, 2000'lerin başındaki JSF (JavaServer Faces) mimarisi ile 2026'nın Modern Web Mimarisi (Next.js, RSC) arasındaki şaşırtıcı benzerlikleri, nedenlerini ve bu dönüşümün nasıl yönetileceğini anlatır. Amacımız bir teknolojiyi diğerine üstün kılmak değil, **mimari sarkacın** hareketini anlayarak geleceği öngörmektir.
+> **🐍 Ouroboros Nedir?**
+>
+> Antik mitolojide **"kendi kuyruğunu yiyen yılan"** sembolüdür. Sonsuz döngüyü, kendini yeniden yaratmayı, başlangıcın son, sonun ise başlangıç olduğunu simgeler.
+>
+> **Yazılım dünyası bir Ouroboros'tur.** Sektör sürekli "eskiyi" (kuyruğunu) yer, onu sindirir ve "yeni" bir deriyle (modern teknolojiyle) tekrar ortaya çıkarır. Bugün inceleyeceğimiz Next.js ve Modern Mimari, aslında 20 yıl önce terk ettiğimiz JSF mimarisinin "sindirilmiş ve yeniden doğmuş" halidir.
 
 ---
 
@@ -14,15 +18,54 @@ Bu doküman bir teknoloji karşılaştırması **değildir**. Bu, web geliştirm
 
 2. **Gizli Abstraction'ları Görünür Kılmak**: Modern software stack'lerin katmanları arasına gizlenmiş component'leri, mekanizmaları ve tasarım kararlarını açığa çıkarmak. Birçok developer, kullandığı framework'ün "magic" diye gördüğü özelliklerin aslında 20 yıl önceki çözümlerin modern versiyonları olduğunu bilmez.
 
-### 👥 Kim Ne Öğrenecek? (Audience Takeaways)
+### 🎯 Bu Sunumda Neler Konuşacağız?
 
-Bu sunumda herkes için bir "Aha!" anı var:
+> **"Bu sunum bana ne katacak?"** — Uzmanlık alanınıza göre konuşacağımız konular:
 
-*   **Backend (Java) Geliştiricileri:** "Next.js aslında benim bildiğim JSF/Servlet mantığıymış, sadece JSON yerine HTML dönüyor." diyecekler. Yıllardır biriktirdikleri *State Management* bilgisinin ne kadar değerli olduğunu görecekler.
-*   **Frontend (React) Geliştiricileri:** "Server Actions" veya "RSC"nin sihir olmadığını, arkada dönen RPC (Remote Procedure Call) mekanizmasını ve *Network Waterfall* sorununu nasıl çözdüğünü anlayacaklar.
-*   **Mobil Geliştiricileri:** Backend'in neden 2010'da onlara (REST API) yaklaştığını, şimdi ise neden tekrar Web'e (SSR) döndüğünü görecekler.
-*   **DevOps & Mimarlar:** Deployment karmaşıklığının nasıl **"Uygulama Sunucusu Konfigürasyonu"**ndan **"CI/CD Pipeline Karmaşıklığına"** evrildiğini fark edecekler.
-*   **Fullstack Geliştiricileri:** Büyük resmi görecek ve "Hangi teknolojiyi seçmeliyim?" sorusuna ezbere değil, mimari gerekçelerle cevap verebilecekler.
+#### 👨‍💻 Backend Developer (Java/Spring/Node) 
+- REST API'lerinizin neden **"glue code fabrikası"** haline geldiğini konuşacağız
+- N+1 query probleminin client'a taşındığında **nasıl katlanarak büyüdüğünü** göstereceğiz
+- Server Actions'ın aslında **RPC'nin modern hali** olduğunu keşfedeceğiz
+- **"Frontend ekibi neden bu kadar dosya istiyor?"** sorusunun mimari cevabını tartışacağız
+
+#### 🎨 Frontend Developer (React/Vue/Angular) 
+- `useEffect` kaosunun neden kaçınılmaz olduğunu ve **JSF'in bunu 20 yıl önce nasıl çözdüğünü** inceleyeceğiz
+- Redux/Zustand karmaşıklığının **state'in yanlış yerde tutulmasından** kaynaklandığını göstereceğiz
+- Server Components'ın neden **"geri adım" değil, "yukarı çıkış"** olduğunu tartışacağız
+- **12 dosya probleminin** kök nedenini ve nasıl azaltılacağını ele alacağız
+
+#### 📱 Mobile Developer (React Native/Flutter) 
+- Web'in **"her tıklamada sunucuya git"** problemini neden yeniden kucakladığını konuşacağız
+- Offline-first mimarinin web'de neden **hala zor** olduğunu karşılaştıracağız
+- API tasarımında **over-fetching vs under-fetching** dengesini inceleyeceğiz
+- BFF (Backend for Frontend) pattern'inin neden mobil için **kritik** olduğunu tartışacağız
+
+#### 🔧 Fullstack Developer 
+- **"Her iki tarafı da biliyorum ama neden bu kadar yoruluyorum?"** sorusunun cevabını arayacağız
+- JSF'in tek stack avantajını, modern tooling ile **nasıl geri kazanacağınızı** göstereceğiz
+- tRPC/Server Actions ile **tip güvenliğini uçtan uca** nasıl sağlayacağınızı tartışacağız
+- Mimari seçimlerinizi **hıza, güvenliğe ve bakım maliyetine** göre değerlendireceğiz
+
+#### ⚙️ DevOps / Platform Engineer 
+- JSF'in **"tek WAR, tek sunucu"** basitliğinden **"12 servis, 3 CDN, 2 edge"** karmaşıklığına geçişi inceleyeceğiz
+- **Stateful vs Stateless** deployment'ın altyapı maliyetine etkisini konuşacağız
+- Session Replication (JSF) vs JWT/Redis (SPA) **operasyonel farklarını** karşılaştıracağız
+- **Bundle size, cold start, edge caching** gibi modern deployment zorluklarını ele alacağız
+- "Neden artık **sadece `mvn deploy` yetmiyor?**" sorusunu cevaplayacağız
+
+#### 🏗️ Architect / Tech Lead 
+- Teknoloji seçimlerinin **25 yıllık tarihsel bağlamını** birlikte keşfedeceğiz
+- **"Modern olmak"** ile **"doğru mimari"** arasındaki farkı netleştireceğiz
+- Ekip kompozisyonuna göre **hangi stack'in ROI'si yüksek** olduğunu değerlendireceğiz
+- JSF'in **zorunlu kıldığı best practice'leri** modern stack'te nasıl uygulayacağınızı tartışacağız
+
+#### 🎓 Junior Developer / 
+- Web mimarisinin **"neden böyle evrildiğini"** hikaye formatında anlatacağız
+- Buzzword'lerin arkasındaki **gerçek problemleri** açıklayacağız
+- Kariyerinizde karşılaşacağınız **mimari tartışmalara** hazırlayacağız
+- **"Eski teknoloji = kötü"** yanılgısını birlikte sorgulayacağız
+
+---
 
 ### Sizin Yolculuğunuz
 
@@ -240,7 +283,7 @@ Cevap: **JSP ve JSF**
 
 ---
 
-## 2. Büyük Resim: Mimari Sarkaç (The Pendulum)
+## 2️⃣ Büyük Resim: Mimari Sarkaç (The Pendulum)
 
 Yazılım dünyası doğrusal bir çizgide ilerlemez; bir sarkaç gibi salınır. Biz şu an, sarkacın tekrar "Sunucu" (Server) tarafına döndüğü tarihi bir ana tanıklık ediyoruz.
 
@@ -270,23 +313,33 @@ graph LR
 *   **Bugün (Next.js):** `Server Actions` ile sunucudaki bir TypeScript fonksiyonunu çağırıyoruz.
 *   **Fark:** Aradaki teknoloji (XML vs JSX, HTTP Session vs Closure) değişti, ama **zihniyet** (Mindset) aynı: "Veri nerede duruyorsa, işlem orada yapılmalıdır."
 
----
-
-## 2. Component Ağacı: Evden Uzakta Bir Gezi
+### Component Ağacı: UI Nerede Yaşıyor?
 
 UI bileşenlerimiz (Button, Input, Panel) nerede yaşıyor? Bu sorunun cevabı, mimarinin kalbidir.
+<!-- TODO: review -->
+![Component Tree Evrimi](/images/component_tree_evolution.png)
+<!-- ⚠️ EKSİK GÖRSEL: Bu dosya henüz oluşturulmamış -->
 
-### A. JSF: "Ağaç Sunucuda Yaşar"
+<!-- 📸 GÖRSEL PROMPT: component_tree_evolution.png
+Prompt: "Three-panel horizontal illustration showing component tree location over time:
+PANEL 1 (2006 - JSF): Tree inside a SERVER box, browser shows only reflection
+PANEL 2 (2015 - React): Tree inside BROWSER box, server is empty/minimal
+PANEL 3 (2024 - RSC): Tree split - trunk/branches in SERVER, leaves in BROWSER
+Arrows showing evolution. Timeline at bottom.
+Title: 'Where Does the UI Tree Live?'"
+Boyut: 1600x500px, Format: PNG -->
+
+#### A. JSF: "Ağaç Sunucuda Yaşar"
 JSF'de `UIViewRoot` sunucu hafızasındadır (Heap). Tarayıcı sadece bir "yansıtıcıdır" (Renderer).
 *   **Avantaj:** Güvenli, veritabanına yakın.
 *   **Dezavantaj:** Sunucu belleği şişer (Session Replication derdi).
 
-### B. React SPA: "Ağaç Tarayıcıya Taşındı"
+#### B. React SPA: "Ağaç Tarayıcıya Taşındı"
 2010'larda ağacı söküp kullanıcının tarayıcısına (Virtual DOM) taşıdık.
 *   **Avantaj:** Sunucu rahatladı (Stateless), etkileşim hızlandı.
 *   **Bedel:** Kullanıcının telefonu ısındı, "Loading..." spinner'ları hayatımıza girdi.
 
-### C. Modern Mimari (RSC): "Ağaç Eve Dönüyor"
+#### C. Modern Mimari (RSC): "Ağaç Eve Dönüyor"
 React Server Components (RSC) ile ağacın gövdesini tekrar sunucuya taşıdık, sadece yapraklarını (Interactivity) tarayıcıda bıraktık.
 
 ```mermaid
@@ -308,11 +361,7 @@ classDiagram
     note for ClientComponent "Yapraklar (Button, Input)"
 ```
 
-```
-
----
-
-### 🔍 JSF'in Kalbi: Request Processing Lifecycle (Derinlemesine İnceleme)
+### 🔍 JSF'in Kalbi: Request Processing Lifecycle
 
 > [!IMPORTANT]  
 > **"Çoğu geliştirici JSF'i 'Sihirli bir kutu' olarak görür. Bir inputText koyarsınız, veritabanına gider. Arada ne olur? Bilinmez. Bugün o kutuyu açıyoruz. Göreceğimiz şey sihir değil; HTTP protokolünü Java nesnelerine, Java nesnelerini HTML'e çeviren devasa bir 'Çeviri Motoru'dur."**
@@ -341,7 +390,7 @@ graph TD
 ![JSF Lifecycle Faz Akışı](images/jsf_lifecycle_phases.png)
 ![JSF Lifecycle Faz Akışı detaylı](images/jsf_lifecycle_phases_v2.png)  
 
-> [!TIP] Alternatif Görsel Fikri: **"Fabrika Montaj Hattı"**  
+> [!TIP] Alternatif Görsel: **"Fabrika Montaj Hattı"**  
 > Ham madde (Request) girer → 1. İstasyon (Restore) → 2. İstasyon (Apply) ... → Ürün (Response) çıkar. Hatalı ürün (Validation Error) hattan erken atılır.
 
 
@@ -405,7 +454,7 @@ public String login() {
 ![Component Tree Yapısı](images/component_tree_uiviewroot.png)
 ![Component Tree Yapısı (v2)](images/component_tree_uiviewroot_v2.png)  
 
-> [!TIP] Alternatif Görsel Fikri: **"Ayna Yansıması"**  
+> [!TIP] Alternatif Görsel: **"Ayna Yansıması"**  
 > Sol tarafta HTML DOM (Tarayıcı). Sağ tarafta aynadaki yansıması: Java Nesne Ağacı (Sunucu). Birebir eşleşmeyi gösterir.
 
 
@@ -466,7 +515,7 @@ React'te "Virtual DOM" diye bir şey duydunuz değil mi? Tarayıcı hafızasınd
 ![PrimeFaces jQuery Üretimi](images/primefaces_jquery_generation.png)
 ![PrimeFaces jQuery Üretimi (v2)](images/primefaces_jquery_generation_v2.png)  
 
-> [!TIP] ikinci Görsel Fikri: **"Matruşka Bebek"**  
+> [!TIP] Alternatif Görsel: **"Matruşka Bebek"**  
 > En dışta: JSF Component.  
 > İçinde: PrimeFaces Renderer.  
 > En içte: jQuery Plugin.  
@@ -757,7 +806,7 @@ public class ProductBean implements Serializable {
 
 ---
 
-## 3.5️⃣ Büyük Kopuş: Mobil Çağ ve SPA (2010-2015)
+## 4️⃣ Büyük Kopuş: Mobil Çağ ve SPA (2010-2015)
 
 ### 2010'da Ne Değişti?
 
@@ -802,7 +851,7 @@ public class ProductBean implements Serializable {
 
 ---
 
-## 4️⃣ SPA Dönemi: Karmaşıklık Patlaması (2015-2023)
+## 5️⃣ SPA Dönemi: Karmaşıklık Patlaması (2015-2023)
 
 ### Spring Boot + React: Yeni Standart
 
@@ -841,7 +890,7 @@ public class ProductBean implements Serializable {
 ![12 Dosya vs 3 Dosya](images/file_explosion.png)
 ![12 Dosya vs 3 Dosya detaylı](images/file_explosion_v2.png)  
 
-> [!TIP] Alternatif Görsel Fikri: **"Hazır Yemek vs Malzemeler"**  
+> [!TIP] Alternatif Görsel: **"Hazır Yemek vs Malzemeler"**  
 > JSF (3 Dosya): Paketlenmiş, ısıt-ye hazır yemek (Hızlı ama içeriği değiştiremezsin).  
 > React (12 Dosya): Un, yumurta, şeker, süt... (Tam kontrol ama birleştirmek senin işin).
 
@@ -860,6 +909,44 @@ public class ProductBean implements Serializable {
 
 ### Kod Karşılaştırması: User Kaydetme
 
+**JSF + PrimeFaces (2010)**:
+```xml
+<h:form>
+    <h:inputText value="#{userBean.username}" />
+    <h:inputText value="#{userBean.email}" />
+    <h:commandButton value="Kaydet" action="#{userBean.save}" />
+</h:form>
+```
+
+```java
+public void save() {
+    User user = new User(this.username, this.email);
+    userRepository.save(user);
+}
+```
+**2 dosya. Tip güvenliği var. State senkronizasyonu yok.**
+
+**React SPA - Sadece Frontend Kısmı** (Backend 7 dosya ekstra):
+```typescript
+// types/User.ts
+export interface User {
+    username: string;
+    email: string;
+}
+
+// store/userSlice.ts (Redux - 40+ satır boilerplate)
+export const createUser = createAsyncThunk('users/create', ...);
+
+// components/UserForm.tsx
+const [username, setUsername] = useState('');
+const [email, setEmail] = useState('');
+const dispatch = useDispatch();
+
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    await dispatch(createUser({ username, email }));
+};
+```
 **Görsel 1: Sol tarafta JSF'in 3 satırlık `save` metodu, sağ tarafta React'in aynı işi yapan dağıtık yapısı (Slice, Component, API).**
 
 ![Simple vs Complex Code](images/comparison_save_user.png)
@@ -914,7 +1001,7 @@ public class ProductBean implements Serializable {
 ![Buzdağı Analizi](images/glue_code_iceberg.png)
 ![Buzdağı Analizi (v2)](images/glue_code_iceberg_v2.png)  
 
-> [!TIP] Alternatif Görsel Fikri: **"Koli Bandı Mimarisi (Duct Tape Architecture)"**  
+> [!TIP] Alternatif Görsel: **"Koli Bandı Mimarisi (Duct Tape Architecture)"**  
 > Modern Stack: Harika görünen parçalar, ama hepsi birbirine koli bandıyla (Glue Code) tutturulmuş.  
 > JSF: Tek parça döküm blok (Monolitik sağlamlık).
 
@@ -934,7 +1021,7 @@ public class ProductBean implements Serializable {
 
 ---
 
-## 5️⃣ Modern SSR: Eve Dönüş (2024+)
+## 6️⃣ Modern SSR: Eve Dönüş (2024+)
 
 ### 2020'lerde Neler Fark Edildi?
 
@@ -958,12 +1045,17 @@ SPA'nın sorunları giderek belirginleşti:
 - Component  tree sunucuda render  edilir
 - Server Actions sunucuda çalışır
 
-![Sarkaç Eve Döndü](images/pendulum_returns.png)  
+![Sarkaç Eve Döndü](/images/pendulum_returns.png)
 
-> [!TIP] Alternatif Görsel Fikri: **"Spiral Merdiven"**  
-> Kuş bakışı bakınca aynı yere dönmüş gibiyiz (Sunucu).  
-> Yandan bakınca çok daha yüksekteyiz (Modern Tooling, TypeScript, Edge).
-
+<!-- 📸 GÖRSEL PROMPT: pendulum_returns.png
+Prompt: "A pendulum clock illustration with 3 marked positions:
+LEFT (2006): 'Server-Centric' - JSF logo, Java coffee cup
+CENTER (2015): 'Client-Centric' - React logo, JavaScript yellow
+RIGHT (2024): 'Server-Centric (Again)' - Next.js logo, but HIGHER position
+The pendulum trail shows an UPWARD SPIRAL, not just back-and-forth.
+Arrow pointing up with text: 'Not returning, ASCENDING'
+Style: Elegant, clock mechanism aesthetic."
+Boyut: 1200x800px, Format: PNG -->  
 
 ### JSF ile Next.js Karşılaştırması
 
@@ -1021,7 +1113,7 @@ export default async function UsersPage() {
 
 ---
 
-## 3. Kod Arkeolojisi: İsimler Değişir, Desenler Kalır
+## Kod Arkeolojisi: İsimler Değişir, Desenler Kalır
 
 Gelin, 20 yıl arayla yazılmış iki kod parçasına bakalım. Benzerlik şok edicidir.
 
@@ -1051,7 +1143,6 @@ Aslında ikisi de aynı şeyi yapar: **Stateless olan HTTP protokolü üzerinde,
 ## 5. Karmaşıklık Eğrisi: Neden Dönüyoruz?
 
 Neden SPA (Single Page App) devri kapanıyor? Çünkü "Arızi Karmaşıklık" (Accidental Complexity) yönetilemez hale geldi.
-
 ```mermaid
 xychart-beta
     title "Proje Büyüklüğüne Göre Karmaşıklık"
@@ -1063,10 +1154,522 @@ xychart-beta
 
 *   **SPA + REST:** Basit bir "Merhaba Dünya" için bile DTO, Controller, Service, Axios, Redux, Store, Component gerekir. (10+ Dosya)
 *   **Modern Monolit:** Veritabanı ve UI yan yana. (2-3 Dosya). Tip güvenliği (Type Safety) uçtan uca otomatik.
+## 7️⃣ Veri Perspektifi: Mimari Kararların Gerçek Maliyeti
+
+Mimari seçimler sadece "hangi framework" sorusu değildir. **Verinin nereden geldiği, nasıl işlendiği ve nereye gittiği** en kritik karardır.
+
+### Temel Soru: Veri Nerede İşleniyor?
+
+| Mimari | Veri Akışı | Network Hop |
+|--------|-----------|-------------|
+| **Server-Centric (JSF)** | DB → Java → HTML | 1 (Tek round-trip) |
+| **SPA + REST** | DB → Java → JSON → JS → DOM | 2+ (Çoklu round-trip) |
+| **RSC (Next.js)** | DB → Node → HTML (+ JSON delta) | 1-2 (Hibrit) |
+
+### N+1 Query Problemi: Lazy Loading'in Bedeli
+
+![N+1 Query Problemi](/images/n_plus_one_problem.png)
+<!-- ⚠️ EKSİK GÖRSEL: Bu dosya henüz oluşturulmamış -->
+
+<!-- 📸 GÖRSEL PROMPT: n_plus_one_problem.png
+Prompt: "Split comparison diagram:
+LEFT (Server-side JSF): Single arrow from 'Server' to 'Database' with '1 Query' label, 
+then single arrow to 'Browser' with complete HTML
+RIGHT (Client-side SPA): Arrow from 'Browser' to 'API' labeled '1', then 100 small arrows 
+back and forth labeled '+100 requests'. Red warning icon.
+Title: 'N+1 Problem: Server vs Client'
+Style: Network diagram with latency indicators."
+Boyut: 1400x600px, Format: PNG -->
+
+**Senaryo**: 100 kullanıcı listesi, her birinin departmanı gösterilecek.
+
+**JSF (Sunucu tarafı)**:
+```java
+// Tek sorgu ile JOIN - sunucuda çözülür
+@NamedQuery("SELECT u FROM User u JOIN FETCH u.department")
+public List<User> getUsers() {
+    return em.createNamedQuery("...", User.class).getResultList();
+}
+```
+→ **1 SQL sorgusu**, HTML client'a hazır gider
+
+**React SPA (Client tarafı)**:
+```typescript
+// İlk istek: kullanıcılar
+const users = await fetch('/api/users'); // 1 istek
+
+// Her satır renderda: departman lazy load
+{users.map(u => <DepartmentBadge deptId={u.deptId} />)} 
+// Her DepartmentBadge kendi verisini çeker → +100 istek!
+```
+→ **101 HTTP isteği** (N+1 problem client'a taşındı)
+
+> [!WARNING]  
+> **Client tarafında Lazy Loading**, sunucu tarafındaki N+1 probleminin **daha kötü** bir versiyonudur. Çünkü her "lazy" çağrı bir **network round-trip**'tir.
+
+### Over-fetching vs Under-fetching
+
+| Problem | Açıklama | Sonuç |
+|---------|----------|-------|
+| **Over-fetching** | Gereğinden fazla veri çekilir | REST `/users` → 50 alan döner, 3'ü kullanılır |
+| **Under-fetching** | Eksik veri, ek istek gerekir | `/users` sonrası `/users/1/orders` lazım |
+
+**JSF avantajı**: Sunucu neyi render edeceğini bilir, sadece gerekeni çeker.  
+**SPA dezavantajı**: API "ne lazım olur" bilmez, ya fazla ya eksik gönderir.
+
+### Veri Yoğunluğu ve Mimari Seçimi
+
+```mermaid
+quadrantChart
+    title Veri Yoğunluğu vs Etkileşim Matrisi
+    x-axis Düşük Etkileşim --> Yüksek Etkileşim
+    y-axis Az Veri --> Çok Veri
+    quadrant-1 SPA + GraphQL
+    quadrant-2 Server Components
+    quadrant-3 Statik Site
+    quadrant-4 SPA + REST
+    
+    Admin Panel: [0.2, 0.9]
+    Dashboard: [0.5, 0.7]
+    E-ticaret: [0.7, 0.6]
+    Chat App: [0.9, 0.3]
+    Blog: [0.1, 0.2]
+```
+
+**Yorumlama:**
+- **Sol üst (Çok veri, az etkileşim)**: JSF/PrimeFaces veya Server Components ideal
+- **Sağ alt (Az veri, çok etkileşim)**: SPA ideal (Chat, real-time)
+- **Ortada**: Hibrit yaklaşımlar (Next.js RSC)
+
+### Payload Karşılaştırması: Aynı Sayfa, Farklı Mimariler
+
+**Senaryo**: 100 satırlık kullanıcı tablosu
+
+| Mimari | İlk Yükleme | Veri Transferi | Toplam | TTI* |
+|--------|-------------|----------------|--------|------|
+| **JSF + PrimeFaces** | 80 KB HTML | — | **80 KB** | ~200ms |
+| **React SPA** | 350 KB JS | + 45 KB JSON | **395 KB** | ~800ms |
+| **Next.js RSC** | 60 KB HTML + 20 KB JS | — | **80 KB** | ~250ms |
+
+*TTI: Time to Interactive
+
+### Waterfall: Client'ta mı, Server'da mı?
+
+![Waterfall Karşılaştırması](/images/waterfall_comparison.png)
+<!-- ⚠️ EKSİK GÖRSEL: Bu dosya henüz oluşturulmamış -->
+
+<!-- 📸 GÖRSEL PROMPT: waterfall_comparison.png
+Prompt: "Two waterfall/timeline diagrams stacked vertically:
+TOP (Client-side SPA): Long sequential bars showing:
+  'Page Load' -> 'JS Parse' -> 'API Call 1' -> 'Wait' -> 'Render' -> 'API Call 2' -> 'Wait'
+  Total time: ~800ms, lots of gray 'waiting' segments
+BOTTOM (Server-side): Compact parallel bars:
+  'Request' -> 'DB Queries (parallel)' -> 'HTML Generate' -> 'Response'
+  Total time: ~200ms, minimal waiting
+Color coding: Green=work, Gray=waiting, Red=network
+Title: 'Data Fetching Waterfall: Client vs Server'"
+Boyut: 1200x800px, Format: PNG -->
+
+**Client-side Data Fetching (SPA)**:
+```
+Sayfa yükle → JS parse → Veri iste → Bekle → Render → Alt veri iste → Bekle
+[========]   [=====]    [=======]   [===]   [====]   [==========]   [===]
+                         ↑ Network      ↑ Render      ↑ N+1 başlıyor
+```
+→ **Waterfall**: Kullanıcı uzun süre "Loading..." görür
+
+**Server-side Data Fetching (JSF/RSC)**:
+```
+İstek → Sunucu: Tüm veriyi çek + HTML üret → Tek response
+[===]   [===================================]   [========]
+         ↑ DB sorguları paralel                  ↑ Hazır HTML
+```
+→ **Tek round-trip**: Kullanıcı direkt içerik görür
+
+### Kritik İçgörü: Data Proximity
+
+![Data Proximity Diagramı](/images/data_proximity_diagram.png)
+<!-- ⚠️ EKSİK GÖRSEL: Bu dosya henüz oluşturulmamış -->
+
+<!-- 📸 GÖRSEL PROMPT: data_proximity_diagram.png
+Prompt: "Concentric circles diagram showing data proximity:
+CENTER: Database icon (smallest latency zone, green, '~1ms')
+RING 1: 'Same JVM (JSF)' - green zone
+RING 2: 'Same Server/Region (RSC)' - yellow zone, '~10ms'
+RING 3: 'Same Data Center' - orange zone, '~50ms'  
+RING 4: 'Cross Internet (SPA)' - red zone, '~200ms+'
+Arrows showing request paths for each architecture.
+Title: 'Data Proximity: Distance = Complexity'"
+Boyut: 1000x1000px, Format: PNG -->
+
+> **"Veri sunucuya ne kadar yakınsa, mimari o kadar basit."**
+
+| Mimari | Veri Mesafesi | Tipik Latency |
+|--------|---------------|---------------|
+| JSF | DB ile aynı JVM | ~1-5ms |
+| Next.js RSC | DB ile aynı sunucu/region | ~5-20ms |
+| SPA + REST | Client → API → DB → API → Client | ~100-500ms |
+
+**Sonuç**: Veri yoğun uygulamalarda (admin panel, dashboard, raporlama) **sunucu tarafı render** hem daha hızlı hem daha basittir.
 
 ---
 
-## 5.5️⃣ Hangi Mimariyi Seçmeli? (Karar Çerçevesi)
+## 8️⃣ JSF'ten Öğrenmemiz Gerekenler: Kayıp Best Practice'ler
+
+![Best Practices Karşılaştırması](/images/best_practices_comparison.png)
+<!-- ⚠️ EKSİK GÖRSEL: Bu dosya henüz oluşturulmamış -->
+
+<!-- 📸 GÖRSEL PROMPT: best_practices_comparison.png
+Prompt: "A checklist comparison infographic with two columns:
+LEFT COLUMN 'JSF (2006)': All items have GREEN checkmarks, locked padlock icons
+- Server-side Validation ✓ (locked)
+- CSRF Protection ✓ (locked)
+- Type Safety ✓ (locked)
+- Lifecycle Discipline ✓ (locked)
+- Centralized Errors ✓ (locked)
+- Server State ✓ (locked)
+
+RIGHT COLUMN 'Modern Stack (2024)': Items have YELLOW warning icons, unlocked padlocks
+- Server-side Validation ⚠ (optional)
+- CSRF Protection ⚠ (often skipped)
+- Type Safety ⚠ (manual setup)
+- Lifecycle Discipline ⚠ (useEffect chaos)
+- Centralized Errors ⚠ (scattered)
+- Server State ⚠ (localStorage risk)
+
+Title: 'JSF: Enforced by Framework | Modern: Your Responsibility'
+Style: Clean checklist, corporate training material."
+Boyut: 1200x800px, Format: PNG -->
+
+JSF'te **framework zorunlu kılıyordu**, modern stack'te **"best practice" diyoruz ama çoğu projede atlanıyor**. Bu bölüm, JSF'in bize öğrettiği disiplinleri ve modern stack'te nasıl uygulanması gerektiğini anlatacağız.
+
+### Temel Tez
+
+> **JSF'te "yanlış yapamazdınız" çünkü framework izin vermezdi. Modern stack'te "doğru yapmak" sizin sorumluluğunuzdadır.**
+
+### 1. Server-Side Validation: Güvenliğin Temeli
+
+**JSF Yaklaşımı (Zorunlu)**:
+```xml
+<h:inputText value="#{bean.email}" required="true">
+    <f:validateRegex pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$" />
+</h:inputText>
+```
+- Validasyon **her zaman sunucuda** çalışır
+- Client bypass edilemez
+- Hata mesajları merkezi (`<h:messages />`)
+
+**Modern Stack'te Sık Yapılan Hata**:
+```typescript
+// ❌ YANLIŞ: Sadece client-side validation
+const handleSubmit = () => {
+    if (!email.includes('@')) { // Tarayıcıda kolayca bypass edilir!
+        setError('Geçersiz email');
+        return;
+    }
+    api.post('/users', { email });
+};
+```
+
+**Modern Stack'te Doğru Yaklaşım**:
+```typescript
+// ✅ DOĞRU: Server-side validation (Zod + Server Action)
+// app/actions.ts
+'use server'
+import { z } from 'zod';
+
+const UserSchema = z.object({
+    email: z.string().email('Geçersiz email formatı'),
+});
+
+export async function createUser(formData: FormData) {
+    const result = UserSchema.safeParse({
+        email: formData.get('email'),
+    });
+    
+    if (!result.success) {
+        return { error: result.error.flatten() }; // Sunucu doğrulaması!
+    }
+    
+    await db.user.create({ data: result.data });
+}
+```
+
+> [!WARNING]  
+> **Client-side validation UX içindir, güvenlik için değil.** JSF bunu biliyordu. Her validation sunucuda tekrarlanmalıdır.
+
+---
+
+### 2. CSRF Koruması: Sessiz Bekçi
+
+**JSF Yaklaşımı (Otomatik)**:
+```xml
+<!-- JSF otomatik olarak her form'a ViewState token ekler -->
+<h:form>
+    <!-- Arka planda: <input type="hidden" name="javax.faces.ViewState" value="encrypted_token" /> -->
+</h:form>
+```
+- Her POST isteği ViewState ile doğrulanır
+- Token olmadan işlem yapılamaz
+- **Sıfır konfigürasyon**
+
+**Modern Stack'te Sık Atlanan**:
+```typescript
+// ❌ Birçok SPA projesi CSRF koruması olmadan çalışıyor
+fetch('/api/transfer', {
+    method: 'POST',
+    body: JSON.stringify({ to: 'attacker', amount: 10000 })
+});
+```
+
+**Modern Stack'te Doğru Yaklaşım**:
+```typescript
+// ✅ Next.js Server Actions otomatik CSRF koruması sağlar
+// Veya manuel: Double Submit Cookie pattern
+
+// middleware.ts
+import { csrf } from '@/lib/csrf';
+
+export async function POST(request: Request) {
+    const token = request.headers.get('X-CSRF-Token');
+    if (!csrf.verify(token)) {
+        return Response.json({ error: 'Invalid CSRF' }, { status: 403 });
+    }
+    // ... işlem
+}
+```
+
+**Checklist**:
+- [ ] Her mutasyon (POST/PUT/DELETE) CSRF token gerektiriyor mu?
+- [ ] Token HttpOnly cookie'de mi saklanıyor?
+- [ ] SameSite=Strict kullanılıyor mu?
+
+---
+
+### 3. Tip Güvenliği: Uçtan Uca Bütünlük
+
+**JSF Yaklaşımı (Java End-to-End)**:
+```java
+// Entity
+public class User {
+    private String email; // Tip: String
+}
+
+// Bean
+public class UserBean {
+    private User user; // Aynı tip
+}
+
+// View: #{userBean.user.email} → Derleme zamanı kontrolü
+```
+- Entity → Bean → View: **Tek tip tanımı**
+- Refactoring güvenli (IDE tüm kullanımları bulur)
+- Runtime tip hataları **imkansız**
+
+**Modern Stack'te Sık Yapılan Hata**:
+```typescript
+// Backend (Java/Node)
+class User { String email; }
+
+// API Response (JSON) - Tip bilgisi kaybolur
+{ "email": "test@test.com" }
+
+// Frontend (TypeScript) - YENİDEN tanımla!
+interface User { email: string; }
+
+// ❌ 3 FARKLI YERDE AYNI TİP! Senkronizasyon hatası kaçınılmaz.
+```
+
+**Modern Stack'te Doğru Yaklaşım**:
+
+**Seçenek A: Shared Types (Monorepo)**
+```typescript
+// packages/shared/types.ts
+export interface User {
+    email: string;
+}
+
+// Backend ve Frontend aynı tipi import eder
+import { User } from '@shared/types';
+```
+
+**Seçenek B: Code Generation (OpenAPI/GraphQL)**
+```bash
+# OpenAPI spec'ten TypeScript tipleri üret
+npx openapi-typescript ./api-spec.yaml -o ./types/api.ts
+```
+
+**Seçenek C: tRPC (End-to-End Type Safety)**
+```typescript
+// Server
+export const userRouter = router({
+    create: procedure
+        .input(z.object({ email: z.string().email() }))
+        .mutation(({ input }) => db.user.create({ data: input })),
+});
+
+// Client - Otomatik tip çıkarımı!
+const result = await trpc.user.create.mutate({ email: 'test@test.com' });
+```
+
+> [!IMPORTANT]  
+> **JSF'te tip uyumsuzluğu derleme hatasıydı. Modern stack'te runtime hatasıdır.** tRPC veya code generation kullanarak bu boşluğu kapatın.
+
+---
+
+### 4. Lifecycle Disiplini: Öngörülebilir Davranış
+
+**JSF Yaklaşımı (6 Faz Garantisi)**:
+```
+Restore View → Apply Request → Validate → Update Model → Invoke Action → Render
+```
+- Her istek **aynı sırayla** işlenir
+- Validasyon **her zaman** model güncellenmeden önce çalışır
+- Side effect'ler sadece **Invoke Application** fazında
+
+**Modern Stack'te Kaos**:
+```typescript
+// ❌ useEffect karmaşası - Sıra garantisi yok
+useEffect(() => { fetchUser(); }, []);
+useEffect(() => { validateForm(); }, [formData]);
+useEffect(() => { if (isValid) saveUser(); }, [isValid]);
+// Hangi sırayla çalışır? Race condition?
+```
+
+**Modern Stack'te Doğru Yaklaşım**:
+```typescript
+// ✅ Explicit lifecycle with state machine (XState veya manuel)
+type State = 'idle' | 'validating' | 'submitting' | 'success' | 'error';
+
+const [state, setState] = useState<State>('idle');
+
+const handleSubmit = async () => {
+    setState('validating');
+    const validation = await validate(formData);
+    
+    if (!validation.success) {
+        setState('error');
+        return;
+    }
+    
+    setState('submitting');
+    await saveUser(formData);
+    setState('success');
+};
+```
+
+**Veya React 19 + Server Actions**:
+```typescript
+// ✅ useActionState - JSF benzeri form lifecycle
+const [state, formAction, isPending] = useActionState(createUser, initialState);
+
+return (
+    <form action={formAction}>
+        {state.error && <ErrorMessage error={state.error} />}
+        <input name="email" />
+        <button disabled={isPending}>
+            {isPending ? 'Kaydediliyor...' : 'Kaydet'}
+        </button>
+    </form>
+);
+```
+
+---
+
+### 5. Merkezi Hata Yönetimi
+
+**JSF Yaklaşımı (Tek Nokta)**:
+```xml
+<h:messages globalOnly="true" styleClass="error-messages" />
+<!-- Tüm hatalar tek yerde toplanır -->
+```
+
+**Modern Stack'te Dağınık Hatalar**:
+```typescript
+// ❌ Her component kendi hatasını yönetir
+const [error1, setError1] = useState(null);
+const [error2, setError2] = useState(null);
+// 50 component = 50 error state = bakım kabusu
+```
+
+**Modern Stack'te Doğru Yaklaşım**:
+```typescript
+// ✅ Error Boundary + Toast System
+// app/layout.tsx
+export default function Layout({ children }) {
+    return (
+        <ErrorBoundary fallback={<ErrorPage />}>
+            <ToastProvider>
+                {children}
+            </ToastProvider>
+        </ErrorBoundary>
+    );
+}
+
+// Herhangi bir component'ten:
+const { toast } = useToast();
+try {
+    await saveUser(data);
+    toast.success('Kaydedildi');
+} catch (e) {
+    toast.error(e.message); // Merkezi bildirim
+}
+```
+
+---
+
+### 6. Session ve State Tutarlılığı
+
+**JSF Yaklaşımı (Sunucu Otoritesi)**:
+```java
+@SessionScoped
+public class CartBean {
+    private List<Item> items; // Sunucu = Tek gerçek kaynak (Single Source of Truth)
+}
+```
+- Sepet durumu **sadece sunucuda**
+- Tarayıcı sekmesi, mobil uygulama → Hepsi aynı durumu görür
+- Manipülasyon **imkansız**
+
+**Modern Stack'te Tutarsızlık**:
+```typescript
+// ❌ Client state = Güvenilmez
+localStorage.setItem('cart', JSON.stringify(items));
+// Kullanıcı DevTools'tan fiyatları değiştirebilir!
+```
+
+**Modern Stack'te Doğru Yaklaşım**:
+```typescript
+// ✅ Server as Source of Truth
+// Sepet sunucuda, client sadece görüntüler
+const { data: cart } = useQuery(['cart'], fetchCart);
+
+// Ekleme işlemi sunucuya gider
+const addToCart = useMutation({
+    mutationFn: (item) => api.post('/cart/add', item),
+    onSuccess: () => queryClient.invalidateQueries(['cart']),
+});
+```
+
+---
+
+### Aksiyon Listesi: Projenizi Denetleyin
+
+Mevcut SPA/SSR projenizde şu soruları sorun:
+
+1. **Validation**: Tüm form validasyonları sunucuda tekrarlanıyor mu?
+2. **CSRF**: Mutasyon endpoint'leri token doğrulaması yapıyor mu?
+3. **Types**: Backend-Frontend tip senkronizasyonu otomatik mi?
+4. **Lifecycle**: Form submission state'leri explicit mi (loading, error, success)?
+5. **Errors**: Hata mesajları merkezi bir sistemden mi geliyor?
+6. **State**: Kritik veriler (sepet, kullanıcı) sunucuda mı tutuluyor?
+
+> [!NOTE]  
+> **JSF bu soruların hepsine "evet" demek zorundaydı.** Modern stack'te "evet" demek sizin tercihinizdir. Tercih etmezseniz, güvenlik ve tutarlılık riske girer.
+
+---
+
+## 9️⃣ Hangi Mimariyi Seçmeli? (Karar Çerçevesi)
 
 **Soruyu doğru sormalıyız**: "Hangi teknoloji daha iyi?" değil, **"Hangi mimari bu projenin ihtiyaçlarına uygun?"**
 
@@ -1127,34 +1730,22 @@ graph TD
 > [!IMPORTANT]  
 > **Mimari kararı teknoloji değil, bağlamdır.** "Modern" olmak için React seçmek, 3x daha yavaş geliştirmeyi kabullenmek demektir. "Eski" kaldı diye JSF'i terk etmek, kanıtlanmış çözümden vazgeçmektir.
 
----
+## 🏁 Kapanış
 
-## 6. Dönüşüm Rehberi: Strangler Fig (Boğucu İncir)
+![Spiral Yükseliş](/images/spiral_ascent_final.png)
+<!-- ⚠️ EKSİK GÖRSEL: Bu dosya henüz oluşturulmamış -->
 
-Elinizde devasa bir JSF uygulaması var. "Hepsini silip baştan yazalım" derseniz, %90 ihtimalle başarısız olursunuz. Doğru strateji doğadan gelir: **Boğucu İncir Ağacı.**
-
-1.  **Tohumu Ekin:** Mevcut JSF uygulamasının önüne modern bir "Proxy" (Next.js) koyun.
-2.  **Dalları Sarın:** Yeni özellikleri (örn. `/dashboard`) Next.js ile yazın.
-3.  **Gövdeyi Çürütün:** Eski sayfaları (örn. `/login`) teker teker Next.js'e taşıyın.
-4.  **Sonuç:** Bir gün uyanacaksınız ve JSF tamamen yok olmuş, yerini modern yapı almış.
-
-```mermaid
-graph TD
-    User[Kullanıcı] --> Proxy[Next.js (Proxy)]
-    Proxy -->|Yeni Rotalar| Modern[Next.js App Router]
-    Proxy -->|Eski Rotalar| Legacy[Eski JSF App]
-    Modern --> DB[(Veritabanı)]
-    Legacy --> DB
-```
-
----
-
-## 7. Gelecek Vizyonu (2030): Agentic Mesh
-
-Sarkaç durmayacak. Şu an sunucuya döndük, peki sonra?
-
-*   **WebAssembly (WASM):** Tarayıcılar o kadar güçlenecek ki, sunucu kodlarını (Node.js, Python, hatta Java) tarayıcının içinde, kum havuzunda (sandbox) çalıştıracağız.
-*   **Agentic Mesh:** Uygulamalar "sayfalar" değil, birbirleriyle konuşan "ajanlar" olacak. UI, bu ajanların sohbetinin görselleşmiş hali olacak.
+<!-- 📸 GÖRSEL PROMPT: spiral_ascent_final.png
+Prompt: "A dramatic upward spiral staircase illustration:
+- Bottom level (dark, old): 'JSF 2006' with Java logo
+- Middle level (bright, chaotic): 'SPA 2015' with React/Angular logos, scattered files
+- Top level (bright, organized): 'RSC 2024' with Next.js logo, clean architecture
+The spiral clearly goes UP, not just around. Light coming from above.
+Text overlay: 'We're not going back. We're going UP.'
+Style: Architectural visualization, inspirational."
+Boyut: 1200x1000px, Format: PNG -->
 
 **Son Söz:**
-JSF öğrenmiş bir mühendis, Next.js öğrenirken zorlanmaz. Çünkü o, **dağıtık sistemlerin zorluklarını ve sunucu tarafı render etmenin konforunu** zaten biliyordur. Teknolojiler değişir, mimari prensipler baki kalır.
+JSF öğrenmiş bir mühendis, Next.js öğrenirken zorlanmaz. Çünkü o, **dağıtık sistemlerin zorluklarını ve sunucu tarafı render etmenin konforunu** zaten biliyordur. 
+
+> **"Teknolojiler değişir, mimari prensipler baki kalır."**
